@@ -1,11 +1,134 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import IntroScreen from "@/components/reflection/IntroScreen";
+import BreathingScreen from "@/components/reflection/BreathingScreen";
+import ReflectionPrompt from "@/components/reflection/ReflectionPrompt";
+import IntentionScreen from "@/components/reflection/IntentionScreen";
+import CheckInScreen from "@/components/reflection/CheckInScreen";
+import ClosingScreen from "@/components/reflection/ClosingScreen";
+import HistoryScreen from "@/components/reflection/HistoryScreen";
+import { ReflectionEntry, saveReflection } from "@/lib/reflections";
+
+const pageVariants = {
+  enter: { opacity: 0, y: 16 },
+  center: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -16 },
+};
+
+const pageTransition = { duration: 0.5, ease: "easeInOut" };
+
+type Screen = "intro" | "breathing" | "r1" | "r2" | "r3" | "intention" | "checkin" | "closing" | "history";
+
+const reflectionPrompts = [
+  {
+    step: 1,
+    prompt: "One small moment recently with your partner that did not feel tense was…",
+    example: '"We had a brief, calm conversation in the evening."',
+  },
+  {
+    step: 2,
+    prompt: "One effort your partner has made — even if imperfect — is…",
+    example: '"They attempted to explain their feelings instead of withdrawing."',
+  },
+  {
+    step: 3,
+    prompt: "One quality in your partner that has remained consistent over time is…",
+    example: '"They continue to show dedication toward our responsibilities."',
+  },
+];
 
 const Index = () => {
+  const [screen, setScreen] = useState<Screen>("intro");
+  const [responses, setResponses] = useState<string[]>(["", "", ""]);
+  const [intention, setIntention] = useState("");
+  const [checkIn, setCheckIn] = useState("");
+
+  const updateResponse = (index: number, value: string) => {
+    setResponses((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  };
+
+  const handleFinish = () => {
+    const entry: ReflectionEntry = {
+      id: crypto.randomUUID(),
+      timestamp: new Date().toISOString(),
+      responses,
+      intention,
+      checkIn,
+    };
+    saveReflection(entry);
+    setScreen("closing");
+  };
+
+  const resetFlow = () => {
+    setResponses(["", "", ""]);
+    setIntention("");
+    setCheckIn("");
+    setScreen("intro");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={screen}
+            variants={pageVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={pageTransition}
+          >
+            {screen === "intro" && (
+              <IntroScreen onBegin={() => setScreen("breathing")} onHistory={() => setScreen("history")} />
+            )}
+            {screen === "breathing" && <BreathingScreen onContinue={() => setScreen("r1")} />}
+            {screen === "r1" && (
+              <ReflectionPrompt
+                {...reflectionPrompts[0]}
+                total={4}
+                value={responses[0]}
+                onChange={(v) => updateResponse(0, v)}
+                onNext={() => setScreen("r2")}
+              />
+            )}
+            {screen === "r2" && (
+              <ReflectionPrompt
+                {...reflectionPrompts[1]}
+                total={4}
+                value={responses[1]}
+                onChange={(v) => updateResponse(1, v)}
+                onNext={() => setScreen("r3")}
+              />
+            )}
+            {screen === "r3" && (
+              <ReflectionPrompt
+                {...reflectionPrompts[2]}
+                total={4}
+                value={responses[2]}
+                onChange={(v) => updateResponse(2, v)}
+                onNext={() => setScreen("intention")}
+              />
+            )}
+            {screen === "intention" && (
+              <IntentionScreen value={intention} onChange={setIntention} onContinue={() => setScreen("checkin")} />
+            )}
+            {screen === "checkin" && (
+              <CheckInScreen value={checkIn} onChange={setCheckIn} onFinish={handleFinish} />
+            )}
+            {screen === "closing" && (
+              <ClosingScreen
+                onSave={() => setScreen("history")}
+                onHistory={() => setScreen("history")}
+                onExit={resetFlow}
+              />
+            )}
+            {screen === "history" && <HistoryScreen onBack={resetFlow} />}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
