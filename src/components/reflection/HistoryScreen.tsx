@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { getReflections, deleteReflection, ReflectionEntry } from "@/lib/reflections";
 import { format } from "date-fns";
 import { ChevronDown, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface HistoryScreenProps {
   onBack: () => void;
 }
 
 const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
+  const { t } = useTranslation();
   const [entries, setEntries] = useState<ReflectionEntry[]>(getReflections());
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
@@ -21,20 +23,20 @@ const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
   };
 
   const prompts = [
-    "One small moment that did not feel tense…",
-    "One effort your partner has made…",
-    "One quality that has remained consistent…",
+    t("history.prompts.0"),
+    t("history.prompts.1"),
+    t("history.prompts.2"),
   ];
 
   return (
     <div className="reflection-card space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-heading font-semibold">Your Reflection History</h2>
+        <h2 className="text-xl font-heading font-semibold">{t("history.title")}</h2>
       </div>
 
       {entries.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-8">
-          No reflections saved yet. Your completed sessions will appear here.
+          {t("history.noReflections")}
         </p>
       ) : (
         <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
@@ -53,9 +55,8 @@ const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
                   </p>
                 </div>
                 <ChevronDown
-                  className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${
-                    expanded === entry.id ? "rotate-180" : ""
-                  }`}
+                  className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${expanded === entry.id ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
@@ -76,11 +77,11 @@ const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
                         </div>
                       ))}
                       <div>
-                        <p className="text-xs text-muted-foreground font-medium">Intention</p>
+                        <p className="text-xs text-muted-foreground font-medium">{t("history.prompts.3")}</p>
                         <p className="mt-1 text-foreground/85">{entry.intention}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground font-medium">Emotional Check-In</p>
+                        <p className="text-xs text-muted-foreground font-medium">{t("history.prompts.4")}</p>
                         <p className="mt-1 text-foreground/85">{entry.checkIn}</p>
                       </div>
 
@@ -92,7 +93,7 @@ const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
                             onClick={() => handleDelete(entry.id)}
                             className="text-xs"
                           >
-                            Confirm Delete
+                            {t("history.confirmDelete")}
                           </Button>
                           <Button
                             variant="ghost"
@@ -100,7 +101,7 @@ const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
                             onClick={() => setConfirmDelete(null)}
                             className="text-xs"
                           >
-                            Cancel
+                            {t("history.cancel")}
                           </Button>
                         </div>
                       ) : (
@@ -109,7 +110,7 @@ const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
                           className="flex items-center gap-1.5 text-xs text-destructive/70 hover:text-destructive transition-colors pt-1"
                         >
                           <Trash2 className="w-3 h-3" />
-                          Delete entry
+                          {t("history.delete")}
                         </button>
                       )}
                     </div>
@@ -122,7 +123,7 @@ const HistoryScreen = ({ onBack }: HistoryScreenProps) => {
       )}
 
       <Button variant="outline" onClick={onBack} className="w-full">
-        Back to Start
+        {t("history.back")}
       </Button>
     </div>
   );

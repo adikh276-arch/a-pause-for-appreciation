@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface ClosingScreenProps {
   onSave: () => void;
@@ -7,31 +8,29 @@ interface ClosingScreenProps {
 }
 
 const ClosingScreen = ({ onSave, onHistory, onExit }: ClosingScreenProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="reflection-card text-center space-y-6">
       <div className="space-y-2">
         <p className="text-2xl">🤍</p>
-        <h2 className="text-2xl font-heading font-semibold">Reflection Complete</h2>
+        <h2 className="text-2xl font-heading font-semibold">{t("closing.title")}</h2>
       </div>
 
       <div className="text-sm leading-relaxed text-foreground/85 space-y-4" style={{ textAlign: "justify" }}>
-        <p>
-          This pause does not erase challenges. It simply restores balance in how the relationship is viewed.
-        </p>
-        <p>
-          Even brief moments of noticing can gradually soften emotional rigidity and create space for healthier conversations.
-        </p>
+        <p>{t("closing.text1")}</p>
+        <p>{t("closing.text2")}</p>
       </div>
 
       <div className="flex flex-col gap-3 pt-2">
         <Button onClick={onSave} className="w-full">
-          Save to Reflections
+          {t("closing.save")}
         </Button>
         <Button variant="outline" onClick={onHistory} className="w-full">
-          View History
+          {t("closing.viewHistory")}
         </Button>
         <Button variant="ghost" onClick={onExit} className="w-full text-muted-foreground">
-          Exit
+          {t("closing.exit")}
         </Button>
       </div>
     </div>

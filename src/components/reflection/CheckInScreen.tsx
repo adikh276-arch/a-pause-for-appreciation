@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface CheckInScreenProps {
   value: string;
@@ -6,21 +7,23 @@ interface CheckInScreenProps {
   onFinish: () => void;
 }
 
-const statements = [
-  "I feel slightly more open toward my partner right now.",
-  "I do not notice much change, but I am willing to stay aware.",
-  "I found this somewhat difficult to complete.",
-  "I experienced a small sense of warmth during reflection.",
-  "I noticed resistance, and that feels important to acknowledge.",
-  "I feel a subtle softening compared to before I began.",
-];
-
 const CheckInScreen = ({ value, onChange, onFinish }: CheckInScreenProps) => {
+  const { t } = useTranslation();
+
+  const statements = [
+    t("checkin.statements.s1"),
+    t("checkin.statements.s2"),
+    t("checkin.statements.s3"),
+    t("checkin.statements.s4"),
+    t("checkin.statements.s5"),
+    t("checkin.statements.s6"),
+  ];
+
   return (
     <div className="reflection-card space-y-6">
       <div className="space-y-2">
         <h2 className="text-xl font-heading font-semibold">
-          As you completed this reflection, which statement feels most accurate?
+          {t("checkin.title")}
         </h2>
       </div>
 
@@ -29,11 +32,10 @@ const CheckInScreen = ({ value, onChange, onFinish }: CheckInScreenProps) => {
           <button
             key={s}
             onClick={() => onChange(s)}
-            className={`w-full text-left p-3.5 rounded-lg text-sm font-body transition-all duration-300 ${
-              value === s
+            className={`w-full text-left p-3.5 rounded-lg text-sm font-body transition-all duration-300 ${value === s
                 ? "bg-primary/15 ring-1 ring-primary/40"
                 : "bg-background/60 hover:bg-background/80"
-            }`}
+              }`}
           >
             {s}
           </button>
@@ -41,7 +43,7 @@ const CheckInScreen = ({ value, onChange, onFinish }: CheckInScreenProps) => {
       </div>
 
       <Button onClick={onFinish} className="w-full" disabled={!value}>
-        Finish & Save
+        {t("checkin.finish")}
       </Button>
     </div>
   );

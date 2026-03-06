@@ -8,6 +8,7 @@ import CheckInScreen from "@/components/reflection/CheckInScreen";
 import ClosingScreen from "@/components/reflection/ClosingScreen";
 import HistoryScreen from "@/components/reflection/HistoryScreen";
 import { ReflectionEntry, saveReflection } from "@/lib/reflections";
+import { useTranslation } from "react-i18next";
 
 const pageVariants = {
   enter: { opacity: 0, y: 16 },
@@ -19,25 +20,27 @@ const pageTransition = { duration: 0.5, ease: "easeInOut" };
 
 type Screen = "intro" | "breathing" | "r1" | "r2" | "r3" | "intention" | "checkin" | "closing" | "history";
 
-const reflectionPrompts = [
-  {
-    step: 1,
-    prompt: "One small moment recently with your partner that did not feel tense was…",
-    example: '"We had a brief, calm conversation in the evening."',
-  },
-  {
-    step: 2,
-    prompt: "One effort your partner has made — even if imperfect — is…",
-    example: '"They attempted to explain their feelings instead of withdrawing."',
-  },
-  {
-    step: 3,
-    prompt: "One quality in your partner that has remained consistent over time is…",
-    example: '"They continue to show dedication toward our responsibilities."',
-  },
-];
-
 const Index = () => {
+  const { t } = useTranslation();
+
+  const reflectionPrompts = [
+    {
+      step: 1,
+      prompt: t("reflection.prompts.p1"),
+      example: t("reflection.prompts.p1_ex"),
+    },
+    {
+      step: 2,
+      prompt: t("reflection.prompts.p2"),
+      example: t("reflection.prompts.p2_ex"),
+    },
+    {
+      step: 3,
+      prompt: t("reflection.prompts.p3"),
+      example: t("reflection.prompts.p3_ex"),
+    },
+  ];
+
   const [screen, setScreen] = useState<Screen>("intro");
   const [responses, setResponses] = useState<string[]>(["", "", ""]);
   const [intention, setIntention] = useState("");

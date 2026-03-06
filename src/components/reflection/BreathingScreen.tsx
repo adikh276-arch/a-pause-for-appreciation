@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface BreathingScreenProps {
   onContinue: () => void;
@@ -12,6 +13,7 @@ const EXHALE = 4000;
 const TOTAL_CYCLES = 3;
 
 const BreathingScreen = ({ onContinue }: BreathingScreenProps) => {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<"inhale" | "hold" | "exhale" | "done">("inhale");
   const [cycle, setCycle] = useState(0);
   const [counter, setCounter] = useState(4);
@@ -61,14 +63,14 @@ const BreathingScreen = ({ onContinue }: BreathingScreenProps) => {
   return (
     <div className="reflection-card text-center space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-heading font-semibold">Arrive and Settle</h2>
+        <h2 className="text-2xl font-heading font-semibold">{t("breathing.title")}</h2>
         <p className="text-sm text-muted-foreground leading-relaxed" style={{ textAlign: "justify" }}>
-          Before continuing, allow yourself a brief pause. This moment is not about solving anything. It is about creating space.
+          {t("breathing.description")}
         </p>
       </div>
 
       {phase !== "done" && (
-        <p className="text-xs text-muted-foreground">Follow the breathing rhythm below.</p>
+        <p className="text-xs text-muted-foreground">{t("breathing.instruction")}</p>
       )}
 
       <div className="flex items-center justify-center py-6">
@@ -81,9 +83,9 @@ const BreathingScreen = ({ onContinue }: BreathingScreenProps) => {
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="text-sm font-body text-foreground/70">
-                {phase === "inhale" && `Inhale… ${counter}…`}
-                {phase === "hold" && "Hold…"}
-                {phase === "exhale" && `Exhale… ${counter}…`}
+                {phase === "inhale" && t("breathing.inhale", { counter })}
+                {phase === "hold" && t("breathing.hold")}
+                {phase === "exhale" && t("breathing.exhale", { counter })}
               </p>
             </div>
           </div>
@@ -95,7 +97,7 @@ const BreathingScreen = ({ onContinue }: BreathingScreenProps) => {
             transition={{ duration: 0.8 }}
             style={{ textAlign: "center" }}
           >
-            "I can acknowledge what feels difficult and still remain open to noticing."
+            {t("breathing.affirmation")}
           </motion.p>
         )}
       </div>
@@ -103,7 +105,7 @@ const BreathingScreen = ({ onContinue }: BreathingScreenProps) => {
       {phase === "done" && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
           <Button onClick={onContinue} className="w-full">
-            Continue
+            {t("breathing.continue")}
           </Button>
         </motion.div>
       )}
